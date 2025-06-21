@@ -27,6 +27,17 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 18),
+              _FormHeader('E-mail'),
+              SizedBox(height: 2),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'E-mail',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              SizedBox(height: 18),
               _FormHeader('Senha'),
               SizedBox(height: 2),
               TextFormField(
@@ -36,7 +47,7 @@ class LoginPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

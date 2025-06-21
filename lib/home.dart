@@ -10,7 +10,17 @@ class HomePage extends StatelessWidget {
         title: Text('Home'),
       ),
       body: Center(
-        child: Text('You are in the home page'),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.adb,
+              size: 28,
+            ),
+            SizedBox(width: 12),
+            Text('You are in the home page'),
+          ],
+        ),
       ),
     );
   }
