@@ -1,50 +1,62 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:termo_front_end/login.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
-import 'home.dart';
+import 'infrastructure/ui/navigator_locations.dart';
+import 'infrastructure/ui/routes.dart';
+import 'infrastructure/ui/util/empty_screen.dart';
+import 'theme.dart';
 
 void main() {
-  runApp(const MyApp());
+  usePathUrlStrategy();
+
+  runApp(MyApp());
 }
 
+/// Main app widget
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  /// Standard constructor
+  MyApp({super.key});
+
+  late final BeamerDelegate _routerDelegate = BeamerDelegate(
+    initialPath: '/login',
+    notFoundRedirect: ErrorLocation(),
+    notFoundRedirectNamed: '/error',
+    notFoundPage: const BeamPage(
+      keepQueryOnPop: true,
+      key: ValueKey('error'),
+      title: 'Termo',
+      child: EmptyScreen(),
+    ),
+    locationBuilder: (routeInformation, _) {
+      if (routeInformation.uri.pathSegments.contains('login')) {
+        return LoginLocation();
+      }
+
+      return NavigatorLocations(routeInformation, '/game');
+    },
+  );
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Initial page'),
-        ),
-        body: Builder(builder: (context) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => LoginPage(),
-                    ));
-                  },
-                  child: Text('Go to login page'),
-                ),
-                SizedBox(height: 18),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => HomePage(),
-                    ));
-                  },
-                  child: Text('Go to home page'),
-                )
-              ],
-            ),
-          );
-        }),
+      routerDelegate: _routerDelegate,
+      title: 'Termo',
+      routeInformationParser: BeamerParser(),
+      backButtonDispatcher: BeamerBackButtonDispatcher(
+        delegate: _routerDelegate,
       ),
+      theme: AppTheme.lightTheme(context),
+      builder: (context, child) {
+        // TODO: Add this back
+        // return ChangeNotifierProvider(
+        //   create: (context) => ApplicationState(context, sharedPreferences),
+        //   child: child,
+        // );
+
+        return child ?? const SizedBox();
+      },
     );
   }
 }
