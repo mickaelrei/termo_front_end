@@ -19,7 +19,7 @@ class GameScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Cached server time: ${state.serverTime}'),
+                  Text('Cached server time: ${_formatTime(state.serverTime)}'),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () => state.updateServerTime(),
@@ -33,4 +33,24 @@ class GameScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatTime(int t) {
+  final seconds = (t % 60).toString();
+
+  final minutes = (t ~/ 60 % 60).toString();
+  t ~/= 60;
+
+  final hours = (t ~/ 60 % 24).toString();
+  t ~/= 60;
+
+  final days = (t ~/ 24 % 365.25).floor().toString();
+  t ~/= 24;
+
+  final years = (t ~/ 365).toString();
+
+  return '${hours.padLeft(2, '0')}:'
+      '${minutes.padLeft(2, '0')}:'
+      '${seconds.padLeft(2, '0')}, '
+      '$days dias, $years anos';
 }
