@@ -1,13 +1,28 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'infrastructure/ui/navigator_locations.dart';
-import 'infrastructure/ui/routes.dart';
-import 'infrastructure/ui/util/empty_screen.dart';
+import 'modules/termo_web_service.dart';
+import 'modules/web_service/auth.dart';
+import 'state/global.dart';
 import 'theme.dart';
+import 'ui/navigator_locations.dart';
+import 'ui/routes.dart';
+import 'ui/util/empty_screen.dart';
 
-void main() {
+void main() async {
+  final sharedPrefs = await SharedPreferences.getInstance();
+
+  final termoWS = TermoWS(sharedPrefs);
+  final applicationWS = ApplicationWS(sharedPrefs);
+
+  await initializeUseCases(
+    sharedPrefs,
+    termoWS,
+    applicationWS,
+  );
+
   usePathUrlStrategy();
 
   runApp(MyApp());

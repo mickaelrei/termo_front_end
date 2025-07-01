@@ -1,7 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 
-import 'routes.dart';
 import 'util/empty_screen.dart';
 
 /// Navigator for panel paths
@@ -72,9 +71,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
       ),
     ],
     locationBuilder: BeamerLocationBuilder(
-      beamLocations: <BeamLocation<RouteInformationSerializable>>[
-        GameLocation(),
-      ],
+      beamLocations: <BeamLocation<RouteInformationSerializable>>[],
     ).call,
   );
 

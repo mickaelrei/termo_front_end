@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'infrastructure/ui/util/colors.dart';
+import 'ui/util/colors.dart';
 
 // ignore: avoid_classes_with_only_static_members
 /// Themes used in the panel
