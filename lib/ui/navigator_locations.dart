@@ -61,12 +61,41 @@ class _NavigatorPageState extends State<NavigatorPage> {
         guardNonMatching: true,
         beamToNamed: (origin, target) => '/login',
         check: (context, location) {
+          // Go back to login screen if not logged in
           final appState = Provider.of<ApplicationState>(
             context,
             listen: false,
           );
 
-          return appState.loggedIn;
+          return appState.loggedIn && appState.user != null;
+        },
+      ),
+      BeamGuard(
+        pathPatterns: ['/login'],
+        guardNonMatching: true,
+        beamToNamed: (origin, target) => '/game',
+        check: (context, location) {
+          // Go to game screen if there's any active game
+          final appState = Provider.of<ApplicationState>(
+            context,
+            listen: false,
+          );
+
+          return appState.user?.activeGame == null;
+        },
+      ),
+      BeamGuard(
+        pathPatterns: ['/game'],
+        guardNonMatching: false,
+        beamToNamed: (origin, target) => '/home',
+        check: (context, location) {
+          // Go to home screen if there's no active game
+          final appState = Provider.of<ApplicationState>(
+            context,
+            listen: false,
+          );
+
+          return appState.user?.activeGame != null;
         },
       ),
     ],

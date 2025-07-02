@@ -80,7 +80,44 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return ChangeNotifierProvider(
           create: (context) => ApplicationState(sharedPreferences),
-          child: child,
+          child: Consumer<ApplicationState>(
+            builder: (context, state, _) {
+              if (state.loading) {
+                return Scaffold(
+                  body: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Center(
+                          child: SizedBox.square(
+                            dimension: 40,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1.0,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 16.0),
+                          child: Text(
+                            'Carregando...',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w200,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return child ?? const SizedBox();
+            },
+          ),
         );
       },
     );

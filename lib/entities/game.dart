@@ -18,6 +18,25 @@ typedef GameWordState = List<GameLetterState>;
 /// State of all words in a game
 typedef GameState = List<GameWordState>;
 
+/// Construct a game state from json
+GameState gameStateFromJSON(dynamic json) {
+  final wordStates = <GameWordState>[];
+
+  // Get all word states for this row
+  for (final wordState in json ?? []) {
+    final letterStates = <GameLetterState>[];
+
+    // Get all letter states for this word
+    for (final letterState in wordState) {
+      letterStates.add(GameLetterState.values[letterState]);
+    }
+
+    wordStates.add(letterStates);
+  }
+
+  return wordStates;
+}
+
 /// Configurations for requesting to start agame
 class GameConfig {
   /// Standard constructor
@@ -66,6 +85,44 @@ class ActiveGameData {
 
   /// Game state for each attempt
   final List<GameState> gameStates;
+
+  /// Create an entity from a JSON
+  factory ActiveGameData.fromJSON(Map<String, dynamic> json) {
+    final attempts = <String>[];
+    final gameStates = <GameState>[];
+
+    // Get all attempts
+    for (final attempt in json['attempts'] ?? []) {
+      attempts.add(attempt);
+    }
+
+    // Get all game states (each row)
+    for (final state in json['game_states'] ?? []) {
+      final wordStates = <GameWordState>[];
+
+      // Get all word states for this row
+      for (final wordState in state) {
+        final letterStates = <GameLetterState>[];
+
+        // Get all letter states for this word
+        for (final letterState in wordState) {
+          letterStates.add(GameLetterState.values[letterState]);
+        }
+
+        wordStates.add(letterStates);
+      }
+
+      gameStates.add(wordStates);
+    }
+
+    return ActiveGameData(
+      wordLength: json['word_length'],
+      wordCount: json['word_count'],
+      maxAttempts: json['max_attempts'],
+      attempts: attempts,
+      gameStates: gameStates,
+    );
+  }
 }
 
 /// Response from game start attempt
@@ -102,18 +159,36 @@ class GameAttemptResponse {
   GameAttemptResponse({
     required this.status,
     required this.gameState,
+    required this.words,
+    required this.won,
   });
 
   /// Constructor for failed game start attempt
   GameAttemptResponse.fail()
       : status = GameStartStatus.serverError,
-        gameState = const [];
+        gameState = const [],
+        words = null,
+        won = false;
 
   /// Create an entity from a JSON
   factory GameAttemptResponse.fromJSON(Map<String, dynamic> json) {
+    final List<String>? words;
+    if (json['words'] != null) {
+      words = [];
+      for (final word in json['words']) {
+        words.add(word);
+      }
+    } else {
+      words = null;
+    }
+
     return GameAttemptResponse(
       status: GameStartStatus.values[json['status']],
-      gameState: json['game_state'] ?? [],
+      gameState: json['game_state'] != null
+          ? gameStateFromJSON(json['game_state'])
+          : [],
+      words: words,
+      won: json['won'],
     );
   }
 
@@ -122,4 +197,10 @@ class GameAttemptResponse {
 
   /// Game state obtained from this new attempt
   final GameState gameState;
+
+  /// List of actual words; null if game not finished yet
+  final List<String>? words;
+
+  /// Whether user won with this attempt
+  final bool won;
 }

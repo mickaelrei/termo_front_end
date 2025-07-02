@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../state/application.dart';
 import '../state/login.dart';
 import 'util/info_bar.dart';
+import 'util/loading.dart';
 
 final _lowerRegex = RegExp(r'[a-z]');
 final _upperRegex = RegExp(r'[A-Z]');
@@ -208,7 +209,10 @@ class _PasswordField extends StatelessWidget {
           return;
         }
 
-        _onSubmit(context, state);
+        showLoadingDialog(
+          context: context,
+          function: () => _onSubmit(context, state),
+        );
       },
       autofillHints: const [AutofillHints.password],
       obscureText: !state.showPassword,
@@ -249,7 +253,10 @@ class _ConfirmPasswordField extends StatelessWidget {
     return TextFormField(
       controller: state.confirmPasswordController,
       focusNode: state.confirmPasswordFocus,
-      onFieldSubmitted: (_) => _onSubmit(context, state),
+      onFieldSubmitted: (_) => showLoadingDialog(
+        context: context,
+        function: () => _onSubmit(context, state),
+      ),
       obscureText: !state.showConfirmPassword,
       decoration: InputDecoration(
         hintText: 'Confirmar senha',
@@ -370,7 +377,12 @@ class _SubmitButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(4),
       color: canSubmit ? Colors.blue.shade400 : Colors.grey.shade500,
       child: InkWell(
-        onTap: !canSubmit ? null : () => _onSubmit(context, state),
+        onTap: !canSubmit
+            ? null
+            : () => showLoadingDialog(
+                  context: context,
+                  function: () => _onSubmit(context, state),
+                ),
         borderRadius: BorderRadius.circular(4),
         child: Padding(
           padding: const EdgeInsets.all(12),

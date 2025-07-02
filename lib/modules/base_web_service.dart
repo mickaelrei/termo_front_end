@@ -21,7 +21,7 @@ class BaseWS {
   /// Standard path for requests
   static String domain = switch (_runType) {
     'local' => 'http://localhost:8080',
-    _ => 'http://168.138.128.110',
+    _ => 'https://termo-backend.duckdns.org',
   };
 
   /// Timeout for requests

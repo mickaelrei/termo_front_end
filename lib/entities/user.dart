@@ -52,7 +52,9 @@ class UserData {
       id: json['id'],
       name: json['name'],
       score: json['score'],
-      activeGame: json['active_game'],
+      activeGame: json['active_game'] != null
+          ? ActiveGameData.fromJSON(json['active_game'])
+          : null,
     );
   }
 }
