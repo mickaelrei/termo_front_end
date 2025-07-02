@@ -159,17 +159,6 @@ class _TopBar extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(width: 8),
-            IconButton(
-              splashRadius: 20,
-              onPressed: () {
-                // TODO: Go to settings screen
-              },
-              icon: const Icon(
-                Icons.settings,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(width: 18),
             Expanded(
               child: Text(
                 appState.user?.name ?? '-',

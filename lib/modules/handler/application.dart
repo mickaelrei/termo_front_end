@@ -42,7 +42,7 @@ class ApplicationHandler {
   Future<UserRegisterResponse> requestRegister(
     UserCredentials credentials,
   ) async {
-    final response = await _applicationWS.requestLogin(credentials);
+    final response = await _applicationWS.requestRegister(credentials);
     if (response == null) {
       return UserRegisterResponse.fail();
     }
