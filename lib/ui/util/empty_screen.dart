@@ -13,17 +13,11 @@ class EmptyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(32),
-            child: Text(
-              message ?? 'Erro inesperado',
-            ),
-          ),
-        ],
+    return Scaffold(
+      body: Center(
+        child: Text(
+          message ?? 'Erro inesperado',
+        ),
       ),
     );
   }

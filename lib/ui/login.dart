@@ -1,7 +1,13 @@
+import 'dart:async';
+
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../state/application.dart';
 import '../state/login.dart';
+import 'util/info_bar.dart';
 
 final _lowerRegex = RegExp(r'[a-z]');
 final _upperRegex = RegExp(r'[A-Z]');
@@ -19,7 +25,7 @@ class LoginScreen extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => LoginState(),
       child: Scaffold(
-        backgroundColor: Colors.blue.shade500,
+        backgroundColor: Colors.brown.shade400,
         body: const _Body(),
       ),
     );
@@ -67,7 +73,7 @@ class _Body extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
               side: BorderSide(
-                color: Colors.blue.shade400,
+                color: Colors.brown.shade800,
                 width: 10,
                 strokeAlign: 1,
               ),
@@ -168,6 +174,7 @@ class _NameField extends StatelessWidget {
       decoration: const InputDecoration(
         hintText: 'Nome',
       ),
+      autofillHints: const [AutofillHints.name],
       validator: (value) {
         if (value == null || value.length < 3 || value.length > 32) {
           return 'Necessário entre 3 e 32 caracteres';
@@ -201,11 +208,19 @@ class _PasswordField extends StatelessWidget {
           return;
         }
 
-        state.login();
+        _onSubmit(context, state);
       },
-      obscureText: true,
-      decoration: const InputDecoration(
+      autofillHints: const [AutofillHints.password],
+      obscureText: !state.showPassword,
+      decoration: InputDecoration(
         hintText: 'Senha',
+        suffixIcon: IconButton(
+          splashRadius: 20,
+          onPressed: () => state.showPassword = !state.showPassword,
+          icon: Icon(
+            state.showPassword ? Icons.visibility : Icons.visibility_off,
+          ),
+        ),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -234,10 +249,18 @@ class _ConfirmPasswordField extends StatelessWidget {
     return TextFormField(
       controller: state.confirmPasswordController,
       focusNode: state.confirmPasswordFocus,
-      onFieldSubmitted: (_) => state.login(),
-      obscureText: true,
-      decoration: const InputDecoration(
+      onFieldSubmitted: (_) => _onSubmit(context, state),
+      obscureText: !state.showConfirmPassword,
+      decoration: InputDecoration(
         hintText: 'Confirmar senha',
+        suffixIcon: IconButton(
+          splashRadius: 20,
+          onPressed: () =>
+              state.showConfirmPassword = !state.showConfirmPassword,
+          icon: Icon(
+            state.showConfirmPassword ? Icons.visibility : Icons.visibility_off,
+          ),
+        ),
       ),
       validator: (value) {
         if (value != state.passwordController.text) {
@@ -347,13 +370,7 @@ class _SubmitButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(4),
       color: canSubmit ? Colors.blue.shade400 : Colors.grey.shade500,
       child: InkWell(
-        onTap: !canSubmit
-            ? null
-            : () {
-                if (!state.formKey.currentState!.validate()) return;
-
-                state.login();
-              },
+        onTap: !canSubmit ? null : () => _onSubmit(context, state),
         borderRadius: BorderRadius.circular(4),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -371,4 +388,44 @@ class _SubmitButton extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _onSubmit(BuildContext context, LoginState state) async {
+  if (!state.formKey.currentState!.validate()) return;
+
+  // Check if user is logging in or registering
+  final bool success;
+  final String message;
+  if (state.isLogin) {
+    final response = await state.login();
+    success = response.status.isSuccess;
+    message = response.status.translate();
+  } else {
+    final response = await state.register();
+    success = response.status.isSuccess;
+    message = response.status.translate();
+  }
+
+  // Show info bar with error if login failed
+  if (!success) {
+    await showDefaultInfoBar(
+      context,
+      severity: InfoBarSeverity.error,
+      title: 'Erro',
+      content: message,
+    );
+    return;
+  }
+
+  // Tell application state we logged in
+  final appState = Provider.of<ApplicationState>(
+    context,
+    listen: false,
+  );
+  unawaited(appState.onLoginSuccess());
+
+  // Ask to save credentials on browser
+  TextInput.finishAutofillContext();
+
+  Beamer.of(context).beamToNamed('/home');
 }

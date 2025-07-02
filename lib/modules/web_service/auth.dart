@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../entities/user.dart';
-import '../termo_web_service.dart';
+import '../base_web_service.dart';
 import '../util.dart';
 
 /// Web service for application
-class ApplicationWS extends TermoWS {
+class ApplicationWS extends BaseWS {
   /// Standard constructor
   ApplicationWS(super.sharedPreferences);
 
@@ -15,7 +15,7 @@ class ApplicationWS extends TermoWS {
   Future<Map<String, dynamic>?> requestLogin(
     UserCredentials credentials,
   ) async {
-    final uri = Uri.parse('${TermoWS.domain}/login');
+    final uri = Uri.parse('${BaseWS.domain}/login');
 
     try {
       final response = await http
@@ -25,7 +25,7 @@ class ApplicationWS extends TermoWS {
               credentials.toJSON(),
             ),
           )
-          .timeout(TermoWS.requestTimeout);
+          .timeout(BaseWS.requestTimeout);
 
       if (response.statusCode != 200) {
         logFail(uri, response);
@@ -43,7 +43,7 @@ class ApplicationWS extends TermoWS {
   Future<Map<String, dynamic>?> requestRegister(
     UserCredentials credentials,
   ) async {
-    final uri = Uri.parse('${TermoWS.domain}/register');
+    final uri = Uri.parse('${BaseWS.domain}/register');
 
     try {
       final response = await http
@@ -53,7 +53,7 @@ class ApplicationWS extends TermoWS {
               credentials.toJSON(),
             ),
           )
-          .timeout(TermoWS.requestTimeout);
+          .timeout(BaseWS.requestTimeout);
 
       if (response.statusCode != 200) {
         logFail(uri, response);

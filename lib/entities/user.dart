@@ -1,4 +1,5 @@
 import '../modules/status_codes/user.dart';
+import 'game.dart';
 
 /// Credentials to be sent to the server for a register/login attempt
 class UserCredentials {
@@ -20,6 +21,39 @@ class UserCredentials {
       'name': name,
       'password': password,
     };
+  }
+}
+
+/// Holds data about a user
+class UserData {
+  /// Standard constructor
+  UserData({
+    required this.id,
+    required this.name,
+    required this.score,
+    required this.activeGame,
+  });
+
+  /// User server identifier
+  final int id;
+
+  /// User name
+  final String name;
+
+  /// How many games the user has won
+  final int score;
+
+  /// User's active game, or null if none
+  final ActiveGameData? activeGame;
+
+  /// Create an entity from a JSON
+  factory UserData.fromJSON(Map<String, dynamic> json) {
+    return UserData(
+      id: json['id'],
+      name: json['name'],
+      score: json['score'],
+      activeGame: json['active_game'],
+    );
   }
 }
 

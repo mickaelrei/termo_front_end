@@ -66,3 +66,62 @@ enum UserLoginStatus {
   /// Whether this status signals success
   bool get isSuccess => this == success;
 }
+
+/// Status for a name update attempt
+enum UserUpdateNameStatus {
+  /// Name update success
+  success,
+
+  /// Invalid new name
+  invalid,
+
+  /// Internal server error
+  serverError;
+
+  /// Convert the enum into a displayable string
+  String translate() {
+    switch (this) {
+      case success:
+        return 'Nome atualizado com sucesso';
+      case invalid:
+        return 'Nome inválido';
+      case serverError:
+        return 'Erro interno. Tente novamente mais tarde';
+    }
+  }
+
+  /// Whether this status signals success
+  bool get isSuccess => this == success;
+}
+
+/// Status for a password update attempt
+enum UserUpdatePasswordStatus {
+  /// Login success
+  success,
+
+  /// Wrong current password
+  wrongCurrent,
+
+  /// Invalid new password
+  invalid,
+
+  /// Internal server error
+  serverError;
+
+  /// Convert the enum into a displayable string
+  String translate() {
+    switch (this) {
+      case success:
+        return 'Senha atualizada com sucesso';
+      case wrongCurrent:
+        return 'Senha atual incorreta';
+      case invalid:
+        return 'Senha inválida';
+      case serverError:
+        return 'Erro interno. Tente novamente mais tarde';
+    }
+  }
+
+  /// Whether this status signals success
+  bool get isSuccess => this == success;
+}

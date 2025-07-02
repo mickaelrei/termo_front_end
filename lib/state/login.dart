@@ -32,12 +32,36 @@ class LoginState extends ChangeNotifier {
   final confirmPasswordFocus = FocusNode();
 
   var _isLogin = true;
+  var _showPassword = false;
+  var _showConfirmPassword = false;
 
   /// Whether state is in login mode
   bool get isLogin => _isLogin;
 
+  /// Whether should show password in field
+  bool get showPassword => _showPassword;
+
+  /// Whether should show confirm password in field
+
+  bool get showConfirmPassword => _showConfirmPassword;
+
+  set showPassword(bool value) {
+    if (_showPassword == value) return;
+
+    _showPassword = value;
+    notifyListeners();
+  }
+
+  set showConfirmPassword(bool value) {
+    if (_showConfirmPassword == value) return;
+
+    _showConfirmPassword = value;
+    notifyListeners();
+  }
+
   @override
   void dispose() {
+    nameController.removeListener(notifyListeners);
     passwordController.removeListener(notifyListeners);
 
     nameController.dispose();
@@ -50,6 +74,7 @@ class LoginState extends ChangeNotifier {
   }
 
   void _init() {
+    nameController.addListener(notifyListeners);
     passwordController.addListener(notifyListeners);
   }
 

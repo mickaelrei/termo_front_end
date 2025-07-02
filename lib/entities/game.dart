@@ -23,22 +23,49 @@ class GameConfig {
   /// Standard constructor
   GameConfig({
     required this.wordLength,
-    required this.gameCount,
+    required this.wordCount,
   });
 
   /// Word length; letter count
   final int wordLength;
 
   /// How many simultaneous words the player will have to guess
-  final int gameCount;
+  final int wordCount;
 
   /// Convert this entity into a map for JSON uses
   Map<String, dynamic> toJSON() {
     return {
       'word_length': wordLength,
-      'game_count': gameCount,
+      'word_count': wordCount,
     };
   }
+}
+
+/// Data about an active/unfinished game
+class ActiveGameData {
+  /// Standard constructor
+  ActiveGameData({
+    required this.wordLength,
+    required this.wordCount,
+    required this.maxAttempts,
+    required this.attempts,
+    required this.gameStates,
+  });
+
+  /// Length of each word in the game
+  final int wordLength;
+
+  /// How many simultaneous words the user is guessing
+  final int wordCount;
+
+  /// Maximum number of attempts
+  final int maxAttempts;
+
+  /// List of current attempts
+  final List<String> attempts;
+
+  /// Game state for each attempt
+  final List<GameState> gameStates;
 }
 
 /// Response from game start attempt
@@ -46,27 +73,27 @@ class GameStartResponse {
   /// Standard constructor
   GameStartResponse({
     required this.status,
-    required this.maxTries,
+    required this.maxAttempts,
   });
 
   /// Constructor for failed game start attempt
   GameStartResponse.fail()
       : status = GameStartStatus.serverError,
-        maxTries = 0;
+        maxAttempts = 0;
 
   /// Create an entity from a JSON
   factory GameStartResponse.fromJSON(Map<String, dynamic> json) {
     return GameStartResponse(
       status: GameStartStatus.values[json['status']],
-      maxTries: json['max_tries'] ?? 0,
+      maxAttempts: json['max_attempts'],
     );
   }
 
   /// Register status
   final GameStartStatus status;
 
-  /// User auth token, or null if failed
-  final int maxTries;
+  /// Max number of attempts for the game
+  final int maxAttempts;
 }
 
 /// Response from game attempt attempt

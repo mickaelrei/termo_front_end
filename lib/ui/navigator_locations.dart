@@ -1,6 +1,9 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../state/application.dart';
+import 'routes.dart';
 import 'util/empty_screen.dart';
 
 /// Navigator for panel paths
@@ -58,20 +61,20 @@ class _NavigatorPageState extends State<NavigatorPage> {
         guardNonMatching: true,
         beamToNamed: (origin, target) => '/login',
         check: (context, location) {
-          return true;
+          final appState = Provider.of<ApplicationState>(
+            context,
+            listen: false,
+          );
 
-          // TODO: Check if user is logged in
-          // final appState = Provider.of<ApplicationState>(
-          //   context,
-          //   listen: false,
-          // );
-
-          // return appState.loggedIn;
+          return appState.loggedIn;
         },
       ),
     ],
     locationBuilder: BeamerLocationBuilder(
-      beamLocations: <BeamLocation<RouteInformationSerializable>>[],
+      beamLocations: <BeamLocation<RouteInformationSerializable>>[
+        HomeLocation(),
+        GameLocation(),
+      ],
     ).call,
   );
 
@@ -99,9 +102,57 @@ class _NavigatorPageState extends State<NavigatorPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Beamer(
-      key: _beamerKey,
-      routerDelegate: _routerDelegate,
+    return Column(
+      children: [
+        const _TopBar(),
+        Expanded(
+          child: Beamer(
+            key: _beamerKey,
+            routerDelegate: _routerDelegate,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TopBar extends StatelessWidget {
+  const _TopBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = Provider.of<ApplicationState>(context);
+
+    return Material(
+      color: Colors.brown.shade600,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          children: [
+            const SizedBox(width: 8),
+            IconButton(
+              splashRadius: 20,
+              onPressed: () {
+                // TODO: Go to settings screen
+              },
+              icon: const Icon(
+                Icons.settings,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 18),
+            Expanded(
+              child: Text(
+                appState.user?.name ?? '-',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

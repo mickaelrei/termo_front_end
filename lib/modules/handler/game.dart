@@ -1,14 +1,11 @@
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../entities/game.dart';
 import '../web_service/game.dart';
 
 /// Interface for game handler
 class GameHandler {
   /// Standard constructor
-  GameHandler(this._preferences, this._gameWS);
+  GameHandler(this._gameWS);
 
-  final SharedPreferences _preferences;
   final GameWS _gameWS;
 
   /// Attempts to start a new game with the given config
